@@ -40,9 +40,18 @@ class tinypuppet::puppetdb (
   }
 
   File {
-    require => Exec['generate_cert'],
+    require => [
+      Exec['generate_cert'],
+      Package['pe-puppetdb']
+    ]
   }
 
+  file { '/etc/puppetlabs/puppetdb/ssl':
+    ensure => directory,
+    owner  => pe-puppetdb,
+    group  => pe-puppetdb,
+    mode   => 0640,
+  }
   file { '/etc/puppetlabs/puppetdb/ssl/private.pem':
     ensure => file,
     owner  => pe-puppetdb,
@@ -53,7 +62,7 @@ class tinypuppet::puppetdb (
     ensure => file,
     owner  => pe-puppetdb,
     group  => pe-puppetdb,
-    source => "file:///etc/puppetlabs/puppet/ssl/certs/$ca_certname}.pem",
+    source => "file:///etc/puppetlabs/puppet/ssl/certs/${ca_certname}.pem",
   }
   file { '/etc/puppetlabs/puppetdb/ssl/ca.pem':
     ensure => file,

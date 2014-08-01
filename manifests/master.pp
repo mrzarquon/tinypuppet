@@ -49,7 +49,7 @@ class tinypuppet::master (
   }
 
   exec { 'generate_cert':
-    command => "/opt/puppet/bin/puppet cert generate --dns-alt-names ${dns_alt_name} ${ca_certname}",
+    command => "/opt/puppet/bin/puppet cert generate ${ca_certname}",
     creates => "/etc/puppetlabs/puppet/ssl/public_keys/${ca_certname}.pem",
   }
 
@@ -57,7 +57,7 @@ class tinypuppet::master (
     ensure => file,
     owner  => root,
     group  => root,
-    mode   => '0644',
+    mode   => '0755',
     source => 'puppet:///modules/tinypuppet/pe-bootstrap',
   }
 

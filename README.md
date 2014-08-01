@@ -12,4 +12,6 @@ Copy files/pe\_repo.repo to /etc/yum.repos.d/
 
 yum install pe-agent
 
-puppet apply --modulepath=../ tests/init.pp
+/opt/puppet/bin/puppet module install puppetlabs/inifile --modulepath=/opt/puppet/share/puppet/modules
+
+/opt/puppet/bin/puppet apply --modulepath=../:/opt/puppet/share/puppet/modules tests/init.pp
