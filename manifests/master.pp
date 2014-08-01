@@ -42,7 +42,7 @@ class tinypuppet::master (
     value   => 'puppetdb',
   }
 
-  ini_setting { 'hiera_config',
+  ini_setting { 'hiera_config':
     section => 'main',
     setting => 'hiera_config',
     value   => '$confdir/hiera.yaml',
