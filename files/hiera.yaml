@@ -1,0 +1,10 @@
+--- 
+  :backends:
+    - yaml
+  :hierarchy:
+    - answers
+    - "%{environment}/certname/%{certname}"
+    - "%{environment}/local"
+    - global
+  :yaml:
+    :datadir: /etc/puppetlabs/puppet/hieradata

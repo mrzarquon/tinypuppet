@@ -1,0 +1,6 @@
+[pe_repo]
+name=Puppet Labs PE
+baseurl=https://s3.amazonaws.com/saleseng/repo/3.3.0/el-6-x86_64/
+enabled=1
+gpgcheck=0
+proxy=_none_
