@@ -6,6 +6,7 @@ class tinypuppet::master (
   Ini_setting {
     path   => '/etc/puppetlabs/puppet/puppet.conf',
     ensure => present,
+    notify => Service['pe-bootstrap'],
   }
 
   ini_setting { 'certname':
@@ -47,6 +48,11 @@ class tinypuppet::master (
     setting => 'hiera_config',
     value   => '$confdir/hiera.yaml',
   }
+  ini_setting { 'environmentpath':
+    section => 'main',
+    setting => 'environmentpath',
+    value   => '$confdir/environments',
+  }
 
   exec { 'generate_cert':
     command => "/opt/puppet/bin/puppet cert generate ${ca_certname}",
@@ -61,10 +67,26 @@ class tinypuppet::master (
     source => 'puppet:///modules/tinypuppet/pe-bootstrap',
   }
 
+  #hiera configuration
+
   file { '/etc/puppetlabs/puppet/hiera.yaml':
     ensure => file,
     source => 'puppet:///modules/tinypuppet/hiera.yaml',
   }
+  file { '/etc/puppetlabs/puppet/data':
+    ensure => directory,
+  }
+  file { '/etc/puppetlabs/puppet/data/pe/':
+    ensure => directory,
+  }
+  file { '/etc/puppetlabs/puppet/data/pe_bootstrap':
+    ensure  => link,
+    target  => '/etc/puppetlabs/puppet/data/pe',
+  }
+
+
+
+  # environments configuration
   file { '/etc/puppetlabs/puppet/environments':
     ensure => directory,
   }
@@ -76,11 +98,33 @@ class tinypuppet::master (
   }
   file { '/etc/puppetlabs/puppet/environments/pe_bootstrap/environment.conf':
     ensure  => file,
-    content => 'modulepath = $basemodulepath',
+    content => "modulepath = /etc/puppetlabs/puppet/environments/pe/modules:\$basemodulepath\n",
   }
-
+  file { '/etc/puppetlabs/puppet/environments/pe/manifests/hiera_include.pp':
+    ensure  => file,
+    content => "hiera_include('bootstrap::classes')",
+  }
+  file { '/etc/puppetlabs/puppet/environments/pe_bootstrap/manifests/hiera_include.pp':
+    ensure  => file,
+    content => "hiera_include('bootstrap::classes')",
+  }
+  file { '/etc/puppetlabs/puppet/environments/pe':
+    ensure => directory,
+  }
+  file { '/etc/puppetlabs/puppet/environments/pe/manifests':
+    ensure => directory,
+  }
+  file { '/etc/puppetlabs/puppet/environments/pe/modules':
+    ensure => directory,
+  }
+  file { '/etc/puppetlabs/puppet/environments/pe/environment.conf':
+    ensure  => file,
+    content => 'modulepath = ./modules:/opt/puppet/share/puppet/modules\n',
+  }
+  
   service { 'pe-bootstrap':
     ensure  => running,
+    enable  => false,
     require => File['/etc/init.d/pe-bootstrap'],
   }
   service { 'iptables':

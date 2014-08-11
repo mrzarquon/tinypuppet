@@ -3,8 +3,8 @@
     - yaml
   :hierarchy:
     - answers
-    - "%{environment}/certname/%{certname}"
+    - "%{environment}/clientcert/%{clientcert}"
     - "%{environment}/local"
     - global
   :yaml:
-    :datadir: /etc/puppetlabs/puppet/hieradata
+    :datadir: /etc/puppetlabs/puppet/data
